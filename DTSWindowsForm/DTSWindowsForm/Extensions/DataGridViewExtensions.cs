@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using System.Collections;
 using System.Data;
 using System.Linq;
 
@@ -16,13 +17,17 @@ namespace DTSWindowsForm.Extensions
         /// <param name="outputPath">Diretório onde o arquivo será salvo. Se vazio, será salvo em uma pasta "output" no diretório do executável.</param>
         /// <returns>True se o arquivo foi exportado com sucesso, False em caso de erro.</returns>
         /// <exception cref="ArgumentException">Lançada se o DataGridView estiver vazio ou nulo.</exception>
-        public static bool ExportToXls(this DataGridView grid, string prefixFileName, string outputPath)
+        public static bool ExportToXls(
+            this DataGridView grid,
+            string prefixFileName,
+            string outputPath,
+            IEnumerable? dataItems = null)
         {
             try
             {
                 string fileName = $"{prefixFileName}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
                 MessageBox.Show($"O arquivo será exportado. \n{fileName}");
-                if (grid == null || grid.Rows.Count == 0)
+                if (grid == null || (grid.Rows.Count == 0 && dataItems == null))
                 {
                     throw new ArgumentException("O DataGridView está vazio ou nulo.");
                 }
@@ -48,19 +53,44 @@ namespace DTSWindowsForm.Extensions
                 using (var workbook = new XLWorkbook())
                 {
                     var orderedColumns = grid.Columns.Cast<DataGridViewColumn>()
+                                             .Where(c => c.Visible && c is not DataGridViewButtonColumn)
                                              .OrderBy(c => c.DisplayIndex)
                                              .ToList();
 
                     var dataTable = new DataTable(prefixFileName);
                     foreach (var column in orderedColumns)
                     {
-                        dataTable.Columns.Add(column.HeaderText);
+                        string baseName = string.IsNullOrWhiteSpace(column.HeaderText)
+                            ? (!string.IsNullOrWhiteSpace(column.DataPropertyName)
+                                ? column.DataPropertyName
+                                : column.Name)
+                            : column.HeaderText;
+                        string uniqueName = baseName;
+                        int suffix = 2;
+                        while (dataTable.Columns.Contains(uniqueName))
+                            uniqueName = $"{baseName} ({suffix++})";
+                        dataTable.Columns.Add(uniqueName);
                     }
 
-                    foreach (DataGridViewRow row in grid.Rows)
+                    if (dataItems != null)
                     {
-                        var values = orderedColumns.Select(c => row.Cells[c.Index].Value).ToArray();
-                        dataTable.Rows.Add(values);
+                        foreach (object item in dataItems)
+                        {
+                            var values = orderedColumns.Select(c =>
+                                string.IsNullOrWhiteSpace(c.DataPropertyName)
+                                    ? null
+                                    : item.GetType().GetProperty(c.DataPropertyName)?.GetValue(item))
+                                .ToArray();
+                            dataTable.Rows.Add(values);
+                        }
+                    }
+                    else
+                    {
+                        foreach (DataGridViewRow row in grid.Rows)
+                        {
+                            var values = orderedColumns.Select(c => row.Cells[c.Index].Value).ToArray();
+                            dataTable.Rows.Add(values);
+                        }
                     }
 
                     var worksheet = workbook.Worksheets.Add(dataTable, prefixFileName);
@@ -70,7 +100,6 @@ namespace DTSWindowsForm.Extensions
                     headerStyle.Fill.BackgroundColor = XLColor.BlueGray;
 
                     worksheet.Columns().AdjustToContents();
-                    worksheet.RangeUsed().SetAutoFilter();
                     workbook.SaveAs(fullPath);
                 }
 

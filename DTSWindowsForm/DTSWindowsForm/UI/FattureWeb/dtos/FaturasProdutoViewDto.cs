@@ -6,6 +6,9 @@ public record FaturasProdutoViewDto
     public string? Instalacao { get; set; }
     public string? MesReferencia { get; set; }
     public string? Distribuidora { get; set; }
+    public string? ModeloFattureWeb { get; set; }
+    public string? ClasseConsumo { get; set; }
+    public string? Subgrupo { get; set; }
     public string? IdInstalacao { get; set; }
     public string? DataEmissao { get; set; }
     public string? DataProcessamento { get; set; }

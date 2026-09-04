@@ -95,7 +95,7 @@ namespace DTSWindowsForm
             MinimumSize = new Size(458, 109);
             Name = "FrmDTS";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "DevTools - Share";
+            Text = "DevTools Share";
             pnlForm.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)conteudoBindingSource).EndInit();
             ResumeLayout(false);

@@ -34,6 +34,9 @@
             panel3 = new Panel();
             gridFaturas = new DataGridView();
             panel4 = new Panel();
+            btnPaginaAnterior = new Button();
+            btnProximaPagina = new Button();
+            lblPagina = new Label();
             btnDownloadCsv = new Button();
             btnFiltros = new Button();
             txtQtdFaturasFiltradas = new TextBox();
@@ -41,6 +44,8 @@
             txtQtdFaturas = new TextBox();
             lblFaturas = new Label();
             panel2 = new Panel();
+            lblProgresso = new Label();
+            btnCancelarBusca = new Button();
             btnBuscarFaturas = new Button();
             txtSenha = new TextBox();
             lblSenha = new Label();
@@ -76,6 +81,10 @@
             label8 = new Label();
             txbModeloFw = new TextBox();
             label9 = new Label();
+            txbClasseConsumo = new TextBox();
+            lblClasseConsumo = new Label();
+            txbSubgrupo = new TextBox();
+            lblSubgrupo = new Label();
             panel10 = new Panel();
             tpgCobrancas = new TabPage();
             cmsLog = new ContextMenuStrip(components);
@@ -144,6 +153,9 @@
             // 
             // panel4
             // 
+            panel4.Controls.Add(btnPaginaAnterior);
+            panel4.Controls.Add(btnProximaPagina);
+            panel4.Controls.Add(lblPagina);
             panel4.Controls.Add(btnDownloadCsv);
             panel4.Controls.Add(btnFiltros);
             panel4.Controls.Add(txtQtdFaturasFiltradas);
@@ -155,6 +167,35 @@
             panel4.Name = "panel4";
             panel4.Size = new Size(643, 36);
             panel4.TabIndex = 2;
+            // 
+            // btnPaginaAnterior
+            // 
+            btnPaginaAnterior.Location = new Point(377, 5);
+            btnPaginaAnterior.Name = "btnPaginaAnterior";
+            btnPaginaAnterior.Size = new Size(30, 24);
+            btnPaginaAnterior.TabIndex = 10;
+            btnPaginaAnterior.Text = "<";
+            btnPaginaAnterior.UseVisualStyleBackColor = true;
+            btnPaginaAnterior.Click += btnPaginaAnterior_Click;
+            // 
+            // btnProximaPagina
+            // 
+            btnProximaPagina.Location = new Point(502, 5);
+            btnProximaPagina.Name = "btnProximaPagina";
+            btnProximaPagina.Size = new Size(30, 24);
+            btnProximaPagina.TabIndex = 12;
+            btnProximaPagina.Text = ">";
+            btnProximaPagina.UseVisualStyleBackColor = true;
+            btnProximaPagina.Click += btnProximaPagina_Click;
+            // 
+            // lblPagina
+            // 
+            lblPagina.Location = new Point(410, 9);
+            lblPagina.Name = "lblPagina";
+            lblPagina.Size = new Size(89, 15);
+            lblPagina.TabIndex = 11;
+            lblPagina.Text = "Página 1/1";
+            lblPagina.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnDownloadCsv
             // 
@@ -220,6 +261,8 @@
             // panel2
             // 
             panel2.BorderStyle = BorderStyle.Fixed3D;
+            panel2.Controls.Add(lblProgresso);
+            panel2.Controls.Add(btnCancelarBusca);
             panel2.Controls.Add(btnBuscarFaturas);
             panel2.Controls.Add(txtSenha);
             panel2.Controls.Add(lblSenha);
@@ -230,6 +273,27 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(643, 55);
             panel2.TabIndex = 0;
+            // 
+            // lblProgresso
+            // 
+            lblProgresso.AutoEllipsis = true;
+            lblProgresso.Location = new Point(402, 3);
+            lblProgresso.Name = "lblProgresso";
+            lblProgresso.Size = new Size(230, 15);
+            lblProgresso.TabIndex = 14;
+            // 
+            // btnCancelarBusca
+            // 
+            btnCancelarBusca.BackColor = Color.MistyRose;
+            btnCancelarBusca.FlatStyle = FlatStyle.Popup;
+            btnCancelarBusca.Location = new Point(402, 21);
+            btnCancelarBusca.Name = "btnCancelarBusca";
+            btnCancelarBusca.Size = new Size(96, 23);
+            btnCancelarBusca.TabIndex = 13;
+            btnCancelarBusca.Text = "Cancelar";
+            btnCancelarBusca.UseVisualStyleBackColor = false;
+            btnCancelarBusca.Visible = false;
+            btnCancelarBusca.Click += btnCancelarBusca_Click;
             // 
             // btnBuscarFaturas
             // 
@@ -407,7 +471,7 @@
             // chbFaturasDuplicadas
             // 
             chbFaturasDuplicadas.AutoSize = true;
-            chbFaturasDuplicadas.Location = new Point(6, 376);
+            chbFaturasDuplicadas.Location = new Point(6, 483);
             chbFaturasDuplicadas.Name = "chbFaturasDuplicadas";
             chbFaturasDuplicadas.Size = new Size(124, 19);
             chbFaturasDuplicadas.TabIndex = 7;
@@ -503,6 +567,10 @@
             pnlFiltros.Controls.Add(label8);
             pnlFiltros.Controls.Add(txbModeloFw);
             pnlFiltros.Controls.Add(label9);
+            pnlFiltros.Controls.Add(txbClasseConsumo);
+            pnlFiltros.Controls.Add(lblClasseConsumo);
+            pnlFiltros.Controls.Add(txbSubgrupo);
+            pnlFiltros.Controls.Add(lblSubgrupo);
             pnlFiltros.Controls.Add(chbFaturasDuplicadas);
             pnlFiltros.Controls.Add(panel10);
             pnlFiltros.Controls.Add(label6);
@@ -523,7 +591,7 @@
             pnlFiltros.Dock = DockStyle.Right;
             pnlFiltros.Location = new Point(646, 3);
             pnlFiltros.Name = "pnlFiltros";
-            pnlFiltros.Size = new Size(200, 645);
+            pnlFiltros.Size = new Size(300, 645);
             pnlFiltros.TabIndex = 1;
             // 
             // label8
@@ -552,6 +620,38 @@
             label9.Size = new Size(112, 15);
             label9.TabIndex = 33;
             label9.Text = "Modelo FattureWeb";
+            // 
+            // txbClasseConsumo
+            // 
+            txbClasseConsumo.Location = new Point(6, 383);
+            txbClasseConsumo.Name = "txbClasseConsumo";
+            txbClasseConsumo.Size = new Size(189, 23);
+            txbClasseConsumo.TabIndex = 37;
+            // 
+            // lblClasseConsumo
+            // 
+            lblClasseConsumo.AutoSize = true;
+            lblClasseConsumo.Location = new Point(6, 364);
+            lblClasseConsumo.Name = "lblClasseConsumo";
+            lblClasseConsumo.Size = new Size(101, 15);
+            lblClasseConsumo.TabIndex = 36;
+            lblClasseConsumo.Text = "Classe de consumo";
+            // 
+            // txbSubgrupo
+            // 
+            txbSubgrupo.Location = new Point(6, 442);
+            txbSubgrupo.Name = "txbSubgrupo";
+            txbSubgrupo.Size = new Size(189, 23);
+            txbSubgrupo.TabIndex = 39;
+            // 
+            // lblSubgrupo
+            // 
+            lblSubgrupo.AutoSize = true;
+            lblSubgrupo.Location = new Point(6, 423);
+            lblSubgrupo.Name = "lblSubgrupo";
+            lblSubgrupo.Size = new Size(59, 15);
+            lblSubgrupo.TabIndex = 38;
+            lblSubgrupo.Text = "Subgrupo";
             // 
             // panel10
             // 
@@ -590,13 +690,13 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(857, 679);
+            ClientSize = new Size(1057, 679);
             Controls.Add(panel7);
-            MinimumSize = new Size(873, 718);
+            MinimumSize = new Size(1073, 718);
             Name = "FattureWebForm";
-            ShowIcon = false;
+            ShowIcon = true;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "DevTools - Share (FattureWeb)";
+            Text = "DevTools Share — FattureWeb";
             panel1.ResumeLayout(false);
             panel5.ResumeLayout(false);
             panel3.ResumeLayout(false);
@@ -629,6 +729,9 @@
         private BindingSource conteudoBindingSource;
         private System.ComponentModel.BackgroundWorker bcwCarregaDados;
         private Button btnDownloadCsv;
+        private Button btnPaginaAnterior;
+        private Button btnProximaPagina;
+        private Label lblPagina;
         private TextBox txtQtdFaturas;
         private DataGridViewTextBoxColumn faturaIdDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn instalacaoDataGridViewTextBoxColumn;
@@ -648,6 +751,8 @@
         private Label lblSenha;
         private TextBox txtUsuario;
         private Button btnBuscarFaturas;
+        private Button btnCancelarBusca;
+        private Label lblProgresso;
         private Panel panel7;
         private TabControl tabControl1;
         private TabPage tpgFaturas;
@@ -676,6 +781,10 @@
         private Label label8;
         private TextBox txbModeloFw;
         private Label label9;
+        private TextBox txbClasseConsumo;
+        private Label lblClasseConsumo;
+        private TextBox txbSubgrupo;
+        private Label lblSubgrupo;
         private Button btnFiltros;
         private ContextMenuStrip cmsLog;
         private ToolStripMenuItem checkLog;
